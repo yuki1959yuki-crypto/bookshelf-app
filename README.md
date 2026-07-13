@@ -9,5 +9,5 @@
 * [環境構築の手順](docs/SETUP.md)
 * [バリデーションルール仕様](docs/VALIDATION.md)
 * [API設計書](docs/API_DESIGN.md)
-* [画面遷移要件](docs/SCREEN_TRANSITION.md)
+* [画面遷移](docs/SCREEN-FLOW.csv)
 * [ER図・テーブル構造](docs/DATABASE.md)
