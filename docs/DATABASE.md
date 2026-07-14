@@ -1,160 +1,171 @@
 # データベース設計
 
-## テーブル定義
+## usersテーブル
 
-### users
+| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
+|----------|----|-------------|-----------|-------------|------|
+| id | bigint unsigned | ○ | ○ | | `$table->id()`、Auto Increment、ユーザーID |
+| name | varchar(255) | | ○ | | `string('name')`、ユーザー名 |
+| email | varchar(255) | | ○ | | `UNIQUE`、`string('email')`、メールアドレス（ログイン用） |
+| email_verified_at | timestamp | | | | `nullable()`、`timestamp('email_verified_at')`、メール確認日時 |
+| password | varchar(255) | | ○ | | `string('password')`、ハッシュ化されたパスワード |
+| remember_token | varchar(100) | | | | `$table->rememberToken()`、NULL許可、ログイン保持トークン |
+| created_at | timestamp | | | | `$table->timestamps()`、レコード作成日時 |
+| updated_at | timestamp | | | | `$table->timestamps()`、レコード更新日時 |
 
-| カラム名 | 型 | PK | NN | FK | 備考 |
-|----------|----|:--:|:--:|:--:|------|
-| id | bigint unsigned | ○ | ○ | | `$table->id()` |
-| name | varchar(255) | | ○ | | |
-| email | varchar(255) | | ○ | | UNIQUE |
-| password | varchar(255) | | ○ | | |
-| created_at | timestamp | | | | |
-| updated_at | timestamp | | | | |
-
----
-
-### genres
-
-| カラム名 | 型 | PK | NN | FK | 備考 |
-|----------|----|:--:|:--:|:--:|------|
-| id | bigint unsigned | ○ | ○ | | `$table->id()` |
-| name | varchar(255) | | ○ | | UNIQUE |
-| created_at | timestamp | | | | |
-| updated_at | timestamp | | | | |
+> **備考**  
+> 基本機能版ではFortifyの以下3カラムが追加されるが、応用機能版では不要。
+>
+> - `two_factor_secret`
+> - `two_factor_recovery_codes`
+> - `two_factor_confirmed_at`
 
 ---
 
-### books
+## genresテーブル
 
-| カラム名 | 型 | PK | NN | FK | 備考 |
-|----------|----|:--:|:--:|:--:|------|
-| id | bigint unsigned | ○ | ○ | | `$table->id()` |
-| user_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
-| title | varchar(255) | | ○ | | |
-| isbn | varchar(13) | | ○ | | UNIQUE |
-| created_at | timestamp | | | | |
-| updated_at | timestamp | | | | |
+| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
+|----------|----|-------------|-----------|-------------|------|
+| id | bigint unsigned | ○ | ○ | | `id()`、Auto Increment、ジャンルID |
+| name | varchar(255) | | ○ | | `UNIQUE`、`string('name')`、ジャンル名（一意） |
+| created_at | timestamp | | | | `timestamps()`、レコード作成日時 |
+| updated_at | timestamp | | | | `timestamps()`、レコード更新日時 |
 
 ---
 
-### book_genre
+## booksテーブル
 
-| カラム名 | 型 | PK | NN | FK | 備考 |
-|----------|----|:--:|:--:|:--:|------|
-| id | bigint unsigned | ○ | ○ | | `$table->id()` |
-| book_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
-| genre_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
-
-**制約**
-
-- `unique(['book_id', 'genre_id'])`
-
----
-
-### reviews
-
-| カラム名 | 型 | PK | NN | FK | 備考 |
-|----------|----|:--:|:--:|:--:|------|
-| id | bigint unsigned | ○ | ○ | | `$table->id()` |
-| book_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
-| user_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
-| rating | tinyint unsigned | | ○ | | 1〜5 |
-| comment | text | | ○ | | |
-| created_at | timestamp | | | | |
-| updated_at | timestamp | | | | |
+| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
+|----------|----|-------------|-----------|-------------|------|
+| id | bigint unsigned | ○ | ○ | | `id()`、Auto Increment、書籍ID |
+| user_id | bigint unsigned | | ○ | ○ | `foreignId('user_id')`、登録したユーザーのID |
+| title | varchar(255) | | ○ | | `string('title')`、書籍タイトル |
+| author | varchar(255) | | ○ | | `string('author')`、著者名 |
+| isbn | varchar(13) | | ○ | | `UNIQUE`、`string('isbn', 13)`、ISBN-13コード（一意） |
+| published_date | date | | ○ | | `date('published_date')`、出版日 |
+| description | text | | ○ | | `text('description')`、書籍の説明文・概要 |
+| image_url | varchar(2048) | | ○ | | `string('image_url', 2048)`、書籍画像URL |
+| created_at | timestamp | | | | `timestamps()`、レコード作成日時 |
+| updated_at | timestamp | | | | `timestamps()`、レコード更新日時 |
 
 ---
 
-### favorites
+## book_genreテーブル
 
-| カラム名 | 型 | PK | NN | FK | 備考 |
-|----------|----|:--:|:--:|:--:|------|
-| id | bigint unsigned | ○ | ○ | | `$table->id()` |
-| user_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
-| book_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
+| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
+|----------|----|-------------|-----------|-------------|------|
+| book_id | bigint unsigned | ○ | ○ | ○ | `foreignId('book_id')`、書籍ID |
+| genre_id | bigint unsigned | ○ | ○ | ○ | `foreignId('genre_id')`、ジャンルID |
 
-**制約**
-
-- `unique(['user_id', 'book_id'])`
+**複合主キー:** `(book_id, genre_id)`
 
 ---
 
-### review_likes
+## reviewsテーブル
 
-| カラム名 | 型 | PK | NN | FK | 備考 |
-|----------|----|:--:|:--:|:--:|------|
-| id | bigint unsigned | ○ | ○ | | `$table->id()` |
-| review_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
-| user_id | bigint unsigned | | ○ | ○ | `constrained()->onDelete('cascade')` |
-
-**制約**
-
-- `unique(['review_id', 'user_id'])`
+| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
+|----------|----|-------------|-----------|-------------|------|
+| id | bigint unsigned | ○ | ○ | | `id()`、レビューID |
+| book_id | bigint unsigned | | ○ | ○ | `foreignId('book_id')`、レビュー対象の書籍ID |
+| user_id | bigint unsigned | | ○ | ○ | `foreignId('user_id')`、投稿したユーザーのID |
+| rating | tinyint unsigned | | ○ | | `unsignedTinyInteger('rating')`、星評価（1〜5） |
+| comment | text | | ○ | | `text('comment')`、レビュー本文 |
+| created_at | timestamp | | | | `timestamps()`、レコード作成日時 |
+| updated_at | timestamp | | | | `timestamps()`、レコード更新日時 |
 
 ---
 
-# ER図
+## favoritesテーブル
+
+| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
+|----------|----|-------------|-----------|-------------|------|
+| user_id | bigint unsigned | ○ | ○ | ○ | `foreignId('user_id')`、ユーザーID |
+| book_id | bigint unsigned | ○ | ○ | ○ | `foreignId('book_id')`、書籍ID |
+| created_at | timestamp | | ○ | | `timestamps()`、お気に入り登録日時 |
+
+**複合主キー:** `(user_id, book_id)`
+
+---
+
+## review_likesテーブル
+
+| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
+|----------|----|-------------|-----------|-------------|------|
+| review_id | bigint unsigned | ○ | ○ | ○ | `foreignId('review_id')`、レビューID |
+| user_id | bigint unsigned | ○ | ○ | ○ | `foreignId('user_id')`、ユーザーID |
+
+**複合主キー:** `(review_id, user_id)`
+
 
 ```mermaid
 erDiagram
 
-    users ||--o{ books : registers
-    users ||--o{ reviews : writes
-    users ||--o{ favorites : adds
-    users ||--o{ review_likes : likes
-
-    books ||--o{ reviews : receives
-    books ||--o{ favorites : favorited_by
-    books ||--o{ book_genre : categorized_as
-
-    genres ||--o{ book_genre : includes
-
-    reviews ||--o{ review_likes : liked_by
-
-    users {
+    USERS {
         bigint id PK
-        string name
-        string email
-        string password
+        varchar name
+        varchar email
+        timestamp email_verified_at
+        varchar password
+        varchar remember_token
+        timestamp created_at
+        timestamp updated_at
     }
 
-    genres {
+    GENRES {
         bigint id PK
-        string name
+        varchar name
+        timestamp created_at
+        timestamp updated_at
     }
 
-    books {
+    BOOKS {
         bigint id PK
         bigint user_id FK
-        string title
-        string isbn
+        varchar title
+        varchar author
+        varchar isbn
+        date published_date
+        text description
+        varchar image_url
+        timestamp created_at
+        timestamp updated_at
     }
 
-    book_genre {
-        bigint id PK
-        bigint book_id FK
-        bigint genre_id FK
-    }
-
-    reviews {
+    REVIEWS {
         bigint id PK
         bigint book_id FK
         bigint user_id FK
         tinyint rating
         text comment
+        timestamp created_at
+        timestamp updated_at
     }
 
-    favorites {
-        bigint id PK
-        bigint user_id FK
-        bigint book_id FK
+    BOOK_GENRE {
+        bigint book_id PK,FK
+        bigint genre_id PK,FK
     }
 
-    review_likes {
-        bigint id PK
-        bigint review_id FK
-        bigint user_id FK
+    FAVORITES {
+        bigint user_id PK,FK
+        bigint book_id PK,FK
+        timestamp created_at
     }
+
+    REVIEW_LIKES {
+        bigint review_id PK,FK
+        bigint user_id PK,FK
+    }
+
+    USERS ||--o{ BOOKS : registers
+    USERS ||--o{ REVIEWS : writes
+    USERS ||--o{ FAVORITES : favorites
+    USERS ||--o{ REVIEW_LIKES : likes
+
+    BOOKS ||--o{ REVIEWS : has
+    BOOKS ||--o{ BOOK_GENRE : belongs_to
+    GENRES ||--o{ BOOK_GENRE : categorizes
+
+    BOOKS ||--o{ FAVORITES : favorited_by
+    REVIEWS ||--o{ REVIEW_LIKES : receives
 ```
