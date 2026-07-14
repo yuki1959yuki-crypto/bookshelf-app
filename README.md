@@ -7,7 +7,8 @@
 プロジェクトの仕様や設定手順については、以下のドキュメントを参照してください。
 
 * [環境構築の手順](docs/SETUP.md)
-* [バリデーションルール仕様](docs/VALIDATION.md)
-* [API設計書](docs/API_DESIGN.md)
 * [画面遷移](docs/SCREEN-FLOW.csv)
+* [機能要件](docs/FRD.csv)
+* [バリデーションルール仕様](docs/VALIDATION.md)
 * [ER図・テーブル構造](docs/DATABASE.md)
+* [API設計書](docs/API_DESIGN.md)
