@@ -5,11 +5,15 @@ return [
     'max' => [
         'string' => ':attributeは:max文字以内で入力してください。',
     ],
+    'min' => [
+        'string' => ':attributeは:min文字以上で入力してください。',
+    ],
     'unique' => '指定された:attributeはすでに登録されています。',
     'email' => ':attributeの形式が正しくありません。',
+    'confirmed' => '確認用パスワードと一致しません。',
 
     'attributes' => [
-        'name' => 'ユーザー名',
+        'name' => 'お名前',
         'email' => 'メールアドレス',
         'password' => 'パスワード',
         'title' => '書籍タイトル',
