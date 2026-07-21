@@ -22,8 +22,9 @@ return new class extends Migration
             $table->string('author');
             $table->string('isbn', 13)->unique();
             $table->date('published_date');
-            $table->text('description');
-            $table->string('image_url', 2048);
+
+            $table->text('description')->nullable();
+            $table->string('image_url', 2048)->nullable();
             $table->timestamps();
         });
     }
