@@ -1,67 +1,88 @@
-flowchart TD
-    %% トップ・一覧系
-    Top["📚 書籍一覧（トップ）"]
-    Ranking["🏆 ランキング画面"]
-    Fav["⭐ お気に入り一覧画面"]
-    GenreList["🏷️ ジャンル一覧画面"]
-    GenreDetail["📂 ジャンル詳細画面"]
+# 書籍管理システム 画面遷移図
 
-    %% 詳細・フォーム系
-    BookDetail["📖 書籍詳細画面"]
-    BookEdit["✏️ 書籍編集画面"]
-    BookCreate["➕ 書籍登録画面"]
-    ReviewEdit["💬 レビュー編集画面"]
-    GenreCreate["➕ ジャンル登録画面"]
-    GenreEdit["✏️ ジャンル編集画面"]
+```mermaid
+flowchart LR
 
-    %% 認証系
-    Login["🔑 ログイン画面"]
-    Register["📝 会員登録画面"]
+TOP[書籍一覧（トップ）]
+DETAIL[書籍詳細]
+EDIT[書籍編集]
+BOOK_NEW[書籍登録]
+REVIEW_EDIT[レビュー編集]
+RANK[ランキング]
+FAVORITE[お気に入り一覧]
+GENRE_LIST[ジャンル一覧]
+GENRE_NEW[ジャンル登録]
+GENRE_DETAIL[ジャンル詳細]
+GENRE_EDIT[ジャンル編集]
+LOGIN[ログイン]
+REGISTER[会員登録]
 
-    %% 遷移関係
-    Top -->|書籍タイトル| BookDetail
-    Top -->|「書籍を登録」or「書籍登録」| BookCreate
-    Ranking -->|書籍タイトル| BookDetail
-    Fav -->|書籍タイトル| BookDetail
+%% 書籍
+TOP -->|書籍タイトル| DETAIL
+DETAIL -->|編集| EDIT
+EDIT -->|更新| DETAIL
+DETAIL -->|削除| TOP
 
-    %% 書籍登録画面
-    BookCreate -->|「登録」ボタン<br>『書籍を登録しました』| Top
-    BookCreate -->|「キャンセル」ボタン| Top
-    BookCreate -.->|※未認証時| Login
+%% レビュー
+DETAIL -->|レビュー投稿| TOP
+DETAIL -->|レビュー編集| REVIEW_EDIT
+REVIEW_EDIT -->|更新| DETAIL
+REVIEW_EDIT -->|キャンセル| DETAIL
+DETAIL -->|レビュー削除| TOP
 
-    %% 書籍詳細画面
-    BookDetail -->|「一覧に戻る」ボタン| Top
-    BookDetail -->|書籍「編集」ボタン| BookEdit
-    BookDetail -->|書籍「削除」ボタン<br>『書籍を削除しました』| Top
-    BookDetail -->|レビュー「投稿する」ボタン<br>『レビューを投稿しました』| Top
-    BookDetail -->|自分のレビュー「編集」ボタン| ReviewEdit
-    BookDetail -->|自分のレビュー「削除」ボタン<br>『レビューを削除しました』| Top
+DETAIL -->|一覧に戻る| TOP
 
-    %% 書籍編集画面
-    BookEdit -->|「更新」ボタン<br>『書籍を編集しました』| BookDetail
+%% 書籍登録
+TOP -->|書籍登録| BOOK_NEW
+BOOK_NEW -->|登録| TOP
+BOOK_NEW -->|キャンセル| TOP
 
-    %% レビュー編集画面
-    ReviewEdit -->|「更新する」ボタン<br>『レビューを更新しました』| BookDetail
-    ReviewEdit -->|「キャンセル」ボタン| BookDetail
+%% ランキング
+TOP -->|ランキング| RANK
+RANK -->|書籍タイトル| DETAIL
 
-    %% ジャンル関連
-    GenreList -->|「ジャンルを登録」ボタン| GenreCreate
-    GenreList -->|ジャンル名| GenreDetail
-    GenreList -->|「編集」ボタン| GenreEdit
-    
-    GenreCreate -->|「登録」ボタン<br>『ジャンルを登録しました』| GenreList
-    GenreCreate -->|「キャンセル」ボタン| GenreList
+%% お気に入り
+TOP -->|お気に入り| FAVORITE
+FAVORITE -->|書籍タイトル| DETAIL
 
-    GenreDetail -->|「←書籍一覧へ戻る」ボタン| Top
-    GenreDetail -->|書籍タイトル| BookDetail
+%% ジャンル
+TOP -->|ジャンル管理| GENRE_LIST
+GENRE_LIST -->|ジャンル登録| GENRE_NEW
+GENRE_NEW -->|登録| GENRE_LIST
+GENRE_NEW -->|キャンセル| GENRE_LIST
 
-    GenreEdit -->|「更新」ボタン<br>『ジャンル名を更新しました』| GenreList
-    GenreEdit -->|「キャンセル」ボタン| GenreList
-    GenreEdit -->|「削除」ボタン<br>『書籍を削除しました』| GenreList
+GENRE_LIST -->|ジャンル名| GENRE_DETAIL
+GENRE_DETAIL -->|書籍一覧へ戻る| TOP
+GENRE_DETAIL -->|書籍タイトル| DETAIL
+GENRE_DETAIL -->|編集| GENRE_EDIT
+GENRE_EDIT -->|更新| GENRE_LIST
+GENRE_EDIT -->|キャンセル| GENRE_LIST
+GENRE_DETAIL -->|削除| GENRE_LIST
 
-    %% 認証・会員関連
-    Login -->|「ログイン」ボタン| Top
-    Login -->|「アカウントをお持ちでない方」| Register
-    Register -->|「登録」ボタン<br>『会員登録が完了しました。ログインしてください。』| Login
-    Register -->|「アカウントをお持ちの方」| Login
-    Top -.->|「ログアウト」ボタン| Login
+%% 認証
+TOP -->|ログアウト| LOGIN
+LOGIN -->|ログイン| TOP
+LOGIN -->|アカウントをお持ちでない方| REGISTER
+REGISTER -->|登録| LOGIN
+```
+
+## 遷移時メッセージ
+
+| 操作 | 結果 |
+|------|------|
+| 書籍更新 | 「書籍を編集しました」→ 書籍詳細 |
+| 書籍削除 | 「書籍を削除しました」→ トップ |
+| レビュー投稿 | 「レビューを投稿しました」→ トップ |
+| レビュー更新 | 「レビューを更新しました」→ 書籍詳細 |
+| レビュー削除 | 「レビューを削除しました」→ トップ |
+| 書籍登録 | 「書籍を登録しました」→ トップ |
+| ジャンル登録 | 「ジャンルを登録しました」→ ジャンル一覧 |
+| ジャンル更新 | 「ジャンル名を更新しました」→ ジャンル一覧 |
+| ジャンル削除 | 「書籍を削除しました」→ ジャンル一覧 |
+| 会員登録 | 「会員登録が完了しました。ログインしてください。」→ ログイン画面 |
+
+## 備考
+
+- 未認証で書籍登録を実行した場合はログイン画面へリダイレクト
+- キャンセルボタンは元画面へ戻る
+- ランキング・お気に入り・ジャンル詳細の書籍タイトルから書籍詳細へ遷移
