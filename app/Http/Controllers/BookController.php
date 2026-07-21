@@ -12,7 +12,7 @@ class BookController extends Controller
         $books = Book::with('genres')
             ->withAvg('reviews', 'rating')
             ->latest()
-            ->paginate(9);
+            ->paginate(10);
 
         return view('books.index', compact('books'));
     }
