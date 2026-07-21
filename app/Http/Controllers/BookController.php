@@ -26,4 +26,13 @@ class BookController extends Controller
     {
         //
     }
+
+    public function show(Book $book)
+    {
+        $book->load(['genres', 'reviews.user', 'reviews.likedByUsers']);
+
+        $reviewsAvg = $book->reviews()->avg('rating');
+
+        return view('books.show', compact('book', 'reviewsAvg'));
+    }
 }
