@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBookRequest;
 use App\Models\Book;
-use Illuminate\Http\Request;
+use App\Models\Genre;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -19,12 +21,29 @@ class BookController extends Controller
 
     public function create()
     {
-        return view('books.create');
+        $genres = Genre::all();
+
+        return view('books.create', compact('genres'));
     }
 
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $book = Auth::user()->books()->create([
+            'title' => $validated['title'],
+            'author' => $validated['author'],
+            'isbn' => $validated['isbn'],
+            'published_date' => $validated['published_date'],
+            'description' => $validated['description'] ?? null,
+            'image_url' => $validated['image_url'] ?? null,
+        ]);
+
+        if (isset($validated['genres'])) {
+            $book->genres()->sync($validated['genres']);
+        }
+
+        return redirect()->route('books.index')->with('success', '書籍を登録しました。');
     }
 
     public function show(Book $book)
