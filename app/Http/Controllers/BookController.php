@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
 use Illuminate\Support\Facades\Auth;
@@ -53,5 +54,45 @@ class BookController extends Controller
         $reviewsAvg = $book->reviews()->avg('rating');
 
         return view('books.show', compact('book', 'reviewsAvg'));
+    }
+
+    public function edit(Book $book)
+    {
+        $this->authorize('update', $book);
+
+        $genres = Genre::all();
+
+        return view('books.edit', compact('book', 'genres'));
+    }
+
+    public function update(UpdateBookRequest $request, Book $book)
+    {
+        $this->authorize('update', $book);
+
+        $validated = $request->validated();
+
+        $book->update([
+            'title' => $validated['title'],
+            'author' => $validated['author'],
+            'isbn' => $validated['isbn'],
+            'published_date' => $validated['published_date'],
+            'description' => $validated['description'] ?? null,
+            'image_url' => $validated['image_url'] ?? null,
+        ]);
+
+        if (isset($validated['genres'])) {
+            $book->genres()->sync($validated['genres']);
+        }
+
+        return redirect()->route('books.show', $book)->with('success', '書籍情報を更新しました。');
+    }
+
+    public function destroy(Book $book)
+    {
+        $this->authorize('delete', $book);
+
+        $book->delete();
+
+        return redirect()->route('books.index')->with('success', '書籍を削除しました。');
     }
 }
