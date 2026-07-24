@@ -15,4 +15,15 @@ class GenreController extends Controller
 
         return view('genres.index', compact('genres'));
     }
+
+    public function show(Genre $genre)
+    {
+        $books = $genre->books()
+            ->with('genres')
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->paginate(10);
+
+        return view('genres.show', compact('genre', 'books'));
+    }
 }

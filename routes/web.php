@@ -22,10 +22,6 @@ Route::middleware('auth')->group(function () {
         return back();
     })->name('reviews.like');
 
-    Route::get('/genres/create', function () {
-        return 'ジャンル作成画面（開発予定）';
-    })->name('genres.create');
-
     Route::get('/ranking', function () {
         return 'ランキング画面（開発予定）';
     })->name('ranking.index');
@@ -39,9 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/genres/create', function () {
         return 'ジャンル登録画面（開発予定）';
     })->name('genres.create');
-    Route::get('/genres/{genre}', function () {
-        return 'ジャンル詳細画面（開発予定）';
-    })->name('genres.show');
+
+    Route::get('/genres/{genre}', [GenreController::class, 'show'])->name('genres.show');
+
     Route::get('/genres/{genre}/edit', function () {
         return 'ジャンル編集画面（開発予定）';
     })->name('genres.edit');
