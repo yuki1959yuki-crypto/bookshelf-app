@@ -10,6 +10,17 @@ Route::get('/books', [BookController::class, 'index'])->name('books.index');
 Route::middleware('auth')->group(function () {
     Route::resource('books', BookController::class)->except(['index', 'show']);
 
+    Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');
+    Route::get('/genres/create', [GenreController::class, 'create'])->name('genres.create');
+    Route::post('/genres', [GenreController::class, 'store'])->name('genres.store');
+    Route::get('/genres/{genre}', [GenreController::class, 'show'])->name('genres.show');
+    Route::get('/genres/{genre}/edit', function () {
+        return 'ジャンル編集画面（開発予定）';
+    })->name('genres.edit');
+    Route::delete('/genres/{genre}', function () {
+        return back();
+    })->name('genres.destroy');
+
     Route::post('/books/{book}/favorite', function () {
         return back();
     })->name('favorites.toggle');
@@ -30,20 +41,6 @@ Route::middleware('auth')->group(function () {
         return 'お気に入り画面（開発予定）';
     })->name('favorites.index');
 
-    Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');
-
-    Route::get('/genres/create', function () {
-        return 'ジャンル登録画面（開発予定）';
-    })->name('genres.create');
-
-    Route::get('/genres/{genre}', [GenreController::class, 'show'])->name('genres.show');
-
-    Route::get('/genres/{genre}/edit', function () {
-        return 'ジャンル編集画面（開発予定）';
-    })->name('genres.edit');
-    Route::delete('/genres/{genre}', function () {
-        return back();
-    })->name('genres.destroy');
 });
 
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
