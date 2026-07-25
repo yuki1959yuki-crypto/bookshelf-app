@@ -14,9 +14,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/genres/create', [GenreController::class, 'create'])->name('genres.create');
     Route::post('/genres', [GenreController::class, 'store'])->name('genres.store');
     Route::get('/genres/{genre}', [GenreController::class, 'show'])->name('genres.show');
-    Route::get('/genres/{genre}/edit', function () {
-        return 'ジャンル編集画面（開発予定）';
-    })->name('genres.edit');
+
+    Route::get('/genres/{genre}/edit', [GenreController::class, 'edit'])->name('genres.edit');
+    Route::put('/genres/{genre}', [GenreController::class, 'update'])->name('genres.update');
     Route::delete('/genres/{genre}', function () {
         return back();
     })->name('genres.destroy');
