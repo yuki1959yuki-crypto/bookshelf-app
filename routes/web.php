@@ -14,21 +14,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/genres/create', [GenreController::class, 'create'])->name('genres.create');
     Route::post('/genres', [GenreController::class, 'store'])->name('genres.store');
     Route::get('/genres/{genre}', [GenreController::class, 'show'])->name('genres.show');
-
     Route::get('/genres/{genre}/edit', [GenreController::class, 'edit'])->name('genres.edit');
     Route::put('/genres/{genre}', [GenreController::class, 'update'])->name('genres.update');
-    Route::delete('/genres/{genre}', function () {
-        return back();
-    })->name('genres.destroy');
+
+    Route::delete('/genres/{genre}', [GenreController::class, 'destroy'])->name('genres.destroy');
 
     Route::post('/books/{book}/favorite', function () {
         return back();
     })->name('favorites.toggle');
-
     Route::post('/books/{book}/reviews', function () {
         return back();
     })->name('reviews.store');
-
     Route::post('/reviews/{review}/like', function () {
         return back();
     })->name('reviews.like');
