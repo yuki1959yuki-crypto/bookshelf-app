@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\GenreController;
+namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [BookController::class, 'index'])->name('home');
@@ -16,15 +16,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/genres/{genre}', [GenreController::class, 'show'])->name('genres.show');
     Route::get('/genres/{genre}/edit', [GenreController::class, 'edit'])->name('genres.edit');
     Route::put('/genres/{genre}', [GenreController::class, 'update'])->name('genres.update');
-
     Route::delete('/genres/{genre}', [GenreController::class, 'destroy'])->name('genres.destroy');
 
     Route::post('/books/{book}/favorite', function () {
         return back();
     })->name('favorites.toggle');
-    Route::post('/books/{book}/reviews', function () {
-        return back();
-    })->name('reviews.store');
+
+    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::post('/reviews/{review}/like', function () {
         return back();
     })->name('reviews.like');
