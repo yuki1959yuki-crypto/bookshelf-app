@@ -18,9 +18,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/genres/{genre}', [GenreController::class, 'update'])->name('genres.update');
     Route::delete('/genres/{genre}', [GenreController::class, 'destroy'])->name('genres.destroy');
 
-    Route::post('/books/{book}/favorite', function () {
-        return back();
-    })->name('favorites.toggle');
+    Route::post('/books/{book}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 
     Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
@@ -34,10 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/ranking', function () {
         return 'ランキング画面（開発予定）';
     })->name('ranking.index');
-
-    Route::get('/favorites', function () {
-        return 'お気に入り画面（開発予定）';
-    })->name('favorites.index');
 
 });
 
