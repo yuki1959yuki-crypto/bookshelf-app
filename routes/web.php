@@ -26,9 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
-    Route::post('/reviews/{review}/like', function () {
-        return back();
-    })->name('reviews.like');
+    Route::post('/reviews/{review}/like', [ReviewLikeController::class, 'toggle'])->name('reviews.like');
 
     Route::get('/ranking', function () {
         return 'ランキング画面（開発予定）';
