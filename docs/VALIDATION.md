@@ -6,16 +6,25 @@
 |------|----------------------|-------------------|------|
 | title | `required`, `string`, `max:255` | タイトルは必須です。255文字以内で入力してください。 | |
 | author | `required`, `string`, `max:255` | 著者名は必須です。255文字以内で入力してください。 | |
-| isbn | `required`, `string`, `size:13`, `unique:books,isbn` | ISBNは13桁の半角数字で入力してください。このISBNは既に登録されています。 | 応用で `nullable` に変更予定 |
-| published_date | `required`, `date` | 出版日を入力してください。 | 応用で `nullable` に変更予定 |
+| isbn | `required`, `string`, `size:13`, `unique:books,isbn` | ISBNは13桁の半角数字で入力してください。このISBNは既に登録されています。 | |
+| published_date | `required`, `date` | 出版日を入力してください。 | |
 | genre_ids | `required`, `array`, `min:1` | ジャンルを少なくとも1つ選択してください。 | |
 | image_url | `nullable`, `url`, `max:2048` | 画像URLを入力する場合は、正しいURL形式で入力してください。 | |
-| description | `nullable`, `string` | （デフォルトのメッセージを利用） | 任意入力のため、カスタムメッセージは作らない |
+| description | `nullable`, `string` | （デフォルトのメッセージを利用） | |
 
 **備考**
 
-- バリデーションのルールは要件通り、FormRequestクラス（`app/Http/Requests/StoreBookRequest.php`）に切り出して、コントローラーの負担を減らす設計にする。
-- `messages()` メソッドで日本語を定義する。
+- FormRequestクラス（`StoreBookRequest`）を使用する。
+- `messages()` メソッドで日本語メッセージを定義する。
+
+## ★ 応用機能
+
+応用機能では、一部の入力項目を任意入力に変更する。
+
+| 項目 | 変更内容 |
+|------|----------|
+| isbn | `required` → `nullable` |
+| published_date | `required` → `nullable` |
 
 ---
 
@@ -50,18 +59,20 @@
 
 ---
 
-# 公開API 書籍登録（POST /api/books）
+# 公開API 書籍登録（POST /api/v1/books）
 
-> ※ `user_id`以外はWeb版の書籍登録と同等のバリデーションを行う。
+> ※ user_id以外はWeb版と同等のバリデーションを行う。
 
-| 項目 | バリデーションルール | エラーメッセージ案 | 備考 |
-|------|----------------------|-------------------|------|
-| user_id | `required`, `integer`, `exists:users,id` | 登録者IDが正しくありません。 | 登録者IDの妥当性検証 |
+...
 
 **備考**
 
-- FormRequestクラス：`app/Http/Requests/StoreBookApiRequest.php`
-- `messages()` メソッドで日本語を定義する。
+- FormRequestクラス：`StoreBookApiRequest`
+
+## ★ 応用機能
+
+Laravel Sanctumを導入するため、`user_id`はリクエストから受け取らず、認証ユーザー（`Auth::id()`）から取得する。
+
 
 ---
 
@@ -154,3 +165,19 @@
 **備考**
 
 - プロジェクト全体の言語ファイル（`lang/ja/validation.php`）を設定し、システム全体のエラーメッセージを一括で日本語化する。
+
+---
+# ★ 読書計画作成（POST /reading-plans）
+
+| 項目 | バリデーションルール | エラーメッセージ案 | 備考 |
+|------|----------------------|-------------------|------|
+| book_id | `required`, `exists:books,id` | 書籍を選択してください。 | |
+| target_date | `required`, `date`, `after_or_equal:today` | 本日以降の日付を入力してください。 | |
+| status | `nullable`, `in:planned,completed,overdue` | 状態が正しくありません。 | |
+
+**備考**
+
+- FormRequestクラス：`StoreReadingPlanRequest`
+- 編集時も同等のバリデーションを行う。
+- 重複登録や編集制限は要件に応じて実装する。
+
