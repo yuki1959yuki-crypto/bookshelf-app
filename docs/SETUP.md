@@ -4,9 +4,13 @@
 
 ---
 
-# 1. プロジェクト作成と Sail 導入
+# 1. Laravelプロジェクトの作成
 
 ## Laravelプロジェクト作成（Laravel 10.x）
+
+> **注意**
+>
+> `curl -s "https://laravel.build/..."` は最新版の Laravel をインストールするため、本プロジェクトでは使用しません。
 
 ```bash
 docker run --rm -u "$(id -u):$(id -g)" \
@@ -22,6 +26,10 @@ composer create-project laravel/laravel:^10.0 bookshelf-app
 ```bash
 cd bookshelf-app
 ```
+
+---
+
+# 2. Laravel Sail のインストール
 
 ## Sail のインストール
 
@@ -47,7 +55,7 @@ php artisan sail:install --with=mysql
 
 > **Apple Silicon（M1 / M2 / M3）Mac を利用している場合**
 >
-> MySQLコンテナの起動でエラーが発生する場合は、`compose.yaml` の `mysql` サービスに以下を追加してください。
+> MySQLコンテナの起動時に `no matching manifest for linux/arm64/v8` エラーが発生する場合は、`compose.yaml` の `mysql` サービスに以下を追加してください。
 
 ```yaml
 platform: "linux/amd64"
@@ -55,7 +63,7 @@ platform: "linux/amd64"
 
 ---
 
-# 2. 設定と起動
+# 3. 環境設定
 
 ## .env ファイルの設定
 
@@ -69,6 +77,10 @@ DB_DATABASE=laravel
 DB_USERNAME=sail
 DB_PASSWORD=password
 ```
+
+> **重要**
+>
+> `DB_HOST` は `localhost` や `127.0.0.1` ではなく、Dockerコンテナ名である `mysql` を指定してください。
 
 ## phpMyAdmin の追加
 
@@ -89,6 +101,10 @@ phpmyadmin:
     - mysql
 ```
 
+---
+
+# 4. Sail の起動
+
 ## Sail の起動
 
 ```bash
@@ -104,58 +120,88 @@ source ~/.zshrc
 
 ---
 
-# 3. アプリケーション構築
+# 5. フロントエンドのセットアップ
 
-## フロントエンドセットアップ
+## NPM パッケージのインストール
 
 ```bash
 sail npm install
 ```
 
+## Alpine.js のインストール
+
 ```bash
 sail npm install alpinejs
 ```
+
+## Tailwind CSS のインストール
 
 ```bash
 sail npm install -D tailwindcss@^3.4.0 @tailwindcss/forms postcss autoprefixer
 ```
 
+## Tailwind CSS の初期設定
+
 ```bash
 sail npx tailwindcss init -p
 ```
 
-> **補足**
->
-> - 指定された `tailwind.config.js` の設定を反映してください。
-> - 指定リポジトリから `resources` ディレクトリをインポートしてください。
+## プロジェクトファイルの設定
 
-## アプリケーションキー生成
+以下の設定を行ってください。
+
+- `tailwind.config.js` を指定された内容へ変更
+- `coachtech-prepared-file/Preparedblade-mockcase-BookShelf` リポジトリ（Basicブランチ）の `resources` ディレクトリをプロジェクトへ配置
+
+## Vite の起動
+
+```bash
+sail npm run dev
+```
+
+> **注意**
+>
+> 開発中は Vite 開発サーバーを起動した状態で作業してください。
+
+---
+
+# 6. アプリケーションの初期設定
+
+## アプリケーションキーの生成
 
 ```bash
 sail artisan key:generate
 ```
 
-## マイグレーション・シーディング
+## データベースの作成
 
 ```bash
 sail artisan migrate --seed
 ```
 
+データベースを初期化して再作成する場合は、以下を実行してください。
+
+```bash
+sail artisan migrate:fresh --seed
+```
+
 ---
 
-# 4. 注意事項
+# 7. 注意事項
 
-## 言語設定
+## 日本語設定
 
 `config/app.php` の `locale` を `ja` に変更してください。
 
-また、`lang/ja/` 配下へメッセージファイルを**手動で配置**してください。
+また、`lang/ja/` 配下へ日本語メッセージファイルを**手動で配置**してください。
 
-> **パッケージの導入は禁止**です。
+> **パッケージの導入は禁止**
+>
+> `laravel-lang/lang` などの `laravel-lang/*` 系パッケージは導入しないでください。
 
 ## 脆弱性確認
 
-提出前に必ず以下を実行し、既知の脆弱性が存在しないことを確認してください。
+提出前に以下のコマンドを実行し、既知の脆弱性が存在しないことを確認してください。
 
 ```bash
 composer audit
