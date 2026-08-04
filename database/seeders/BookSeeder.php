@@ -11,9 +11,9 @@ class BookSeeder extends Seeder
 {
     public function run(): void
     {
-        $creator = User::first();
+        $users = User::all();
 
-        if (! $creator) {
+        if ($users->isEmpty()) {
             return;
         }
 
@@ -113,7 +113,7 @@ class BookSeeder extends Seeder
             $createdBook = Book::firstOrCreate(
                 ['isbn' => $book['isbn']],
                 [
-                    'user_id' => $creator->id,
+                    'user_id' => $users->random()->id,
                     'title' => $book['title'],
                     'author' => $book['author'],
                     'published_date' => $book['published_date'],
