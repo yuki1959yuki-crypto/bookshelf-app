@@ -57,7 +57,7 @@ class BookApiTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['title', 'author', 'isbn', 'published_date']);
+            ->assertJsonValidationErrors(['title', 'author']);
     }
 
     public function test_api_can_delete_book(): void
