@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('book_id')->constrained()->cascadeOnDelete();
-            
+
             $table->integer('target_pages')->comment('目標読書ページ数');
             $table->date('target_date')->comment('目標達成日');
             $table->string('status')->default('in_progress')->comment('ステータス');
