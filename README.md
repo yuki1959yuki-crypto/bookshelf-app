@@ -12,3 +12,4 @@
 * [バリデーションルール仕様](docs/VALIDATION.md)
 * [ER図・テーブル構造](docs/DATABASE.md)
 * [API設計書](docs/API_DESIGN.md)
+* [テスト](docs/TEST.md)
