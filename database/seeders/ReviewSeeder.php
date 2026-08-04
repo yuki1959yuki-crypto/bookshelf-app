@@ -17,34 +17,21 @@ class ReviewSeeder extends Seeder
         if ($users->isEmpty() || $books->isEmpty()) {
             return;
         }
-        $distribution = [
-            4,
-            4,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            2,
-            2,
-            2,
-        ];
         $comments = [
-            5 => ['素晴らしい名著でした。何度も読み返したくなります。', '感動しました！期待以上の内容でした。', '心に響く一冊でした。'],
-            4 => ['期待していたよりも良かったです。', 'とても参考になりました。', '面白かったです。'],
-            3 => ['内容はよかったですが、少し難しかったです。', '期待通りの内容でした。', 'まあまあでした。'],
+            1 => ['期待していた内容と異なり、少し残念でした。', 'あまり自分には合いませんでした。', '内容が難しく、途中で読むのが止まってしまいました。'],
+            2 => ['もう少し詳しい説明があると良かったです。', '可もなく不可もなくという印象です。', '期待していたほどではありませんでした。'],
+            3 => ['普通に読める一冊でした。', '期待通りの内容でした。', '全体的に標準的な内容でした。'],
+            4 => ['とても参考になりました。おすすめできます。', '面白かったです。買って良かったと思います。', '期待していたよりも良かったです。'],
+            5 => ['素晴らしい名著でした。何度も読み返したくなります。', '感動しました！最高の一冊です。', '非常にためになる内容でした。'],
         ];
 
-        $reviewCount = 0;
-        foreach ($books as $index => $book) {
-            $numReviewsToCreate = $distribution[$index] ?? 3;
+        foreach ($books as $book) {
+            $numReviewsToCreate = rand(2, 4);
 
-            $shuffledUsers = $users->shuffle();
+            $selectedUsers = $users->random(min($numReviewsToCreate, $users->count()));
 
-            for ($i = 0; $i < $numReviewsToCreate; $i++) {
-                $user = $shuffledUsers[$i % $shuffledUsers->count()];
-                $rating = fake()->numberBetween(3, 5);
+            foreach ($selectedUsers as $user) {
+                $rating = rand(1, 5);
                 $comment = $comments[$rating][array_rand($comments[$rating])];
 
                 Review::create([
@@ -53,8 +40,6 @@ class ReviewSeeder extends Seeder
                     'rating' => $rating,
                     'comment' => $comment,
                 ]);
-
-                $reviewCount++;
             }
         }
     }
