@@ -9,6 +9,7 @@ use Tests\TestCase;
 class AuthAndAccessTest extends TestCase
 {
     use RefreshDatabase;
+
     /** @test */
     public function test_guest_is_redirected_to_login_page_when_accessing_protected_routes(): void
     {

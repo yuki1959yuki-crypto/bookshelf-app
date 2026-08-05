@@ -2,18 +2,21 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
+use App\Models\Book;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class BookTest extends TestCase
 {
     use RefreshDatabase;
+
     /** @test */
     public function book_belongs_to_user()
     {
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
 
-        $book = \App\Models\Book::factory()->create([
+        $book = Book::factory()->create([
             'user_id' => $user->id,
         ]);
 

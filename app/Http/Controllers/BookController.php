@@ -6,11 +6,12 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
-    public function index(\Illuminate\Http\Request $request)
+    public function index(Request $request)
     {
         $query = Book::with('genres')->withAvg('reviews', 'rating');
 
@@ -18,15 +19,18 @@ class BookController extends Controller
             $keyword = $request->input('search');
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
-                  ->orWhere('author', 'like', "%{$keyword}%");
+                    ->orWhere('author', 'like', "%{$keyword}%");
             });
         }
 
         if ($request->filled('genre')) {
-            $query->where('genre_id', $request->input('genre'));
+            $genreId = $request->input('genre');
+            $query->whereHas('genres', function ($q) use ($genreId) {
+                $q->where('genres.id', $genreId);
+            });
         }
 
-        $sort = $request->input('sort', 'latest'); 
+        $sort = $request->input('sort', 'latest');
         switch ($sort) {
             case 'oldest':
                 $query->oldest();
@@ -35,22 +39,22 @@ class BookController extends Controller
                 $query->orderBy('title', 'asc');
                 break;
             case 'rating':
-                
+
                 $query->orderByDesc('reviews_avg_rating');
                 break;
             case 'latest':
             default:
-                $query->latest(); 
+                $query->latest();
                 break;
         }
 
         $books = $query->paginate(10)->withQueryString();
 
-        $genres = \App\Models\Genre::all();
+        $genres = Genre::all();
 
         return view('books.index', compact('books', 'genres'));
     }
-    
+
     public function create()
     {
         $genres = Genre::all();
