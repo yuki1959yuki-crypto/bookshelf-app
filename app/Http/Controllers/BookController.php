@@ -10,16 +10,47 @@ use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $books = Book::with('genres')
-            ->withAvg('reviews', 'rating')
-            ->latest()
-            ->paginate(10);
+        $query = Book::with('genres')->withAvg('reviews', 'rating');
 
-        return view('books.index', compact('books'));
+        if ($request->filled('search')) {
+            $keyword = $request->input('search');
+            $query->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                  ->orWhere('author', 'like', "%{$keyword}%");
+            });
+        }
+
+        if ($request->filled('genre')) {
+            $query->where('genre_id', $request->input('genre'));
+        }
+
+        $sort = $request->input('sort', 'latest'); 
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'title':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'rating':
+                
+                $query->orderByDesc('reviews_avg_rating');
+                break;
+            case 'latest':
+            default:
+                $query->latest(); 
+                break;
+        }
+
+        $books = $query->paginate(10)->withQueryString();
+
+        $genres = \App\Models\Genre::all();
+
+        return view('books.index', compact('books', 'genres'));
     }
-
+    
     public function create()
     {
         $genres = Genre::all();
