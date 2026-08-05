@@ -32,3 +32,14 @@ Route::middleware('auth')->group(function () {
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
 Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
+
+// TODO: まだコントローラーのない未実装機能のダミールート（Bladeエラー回避用）
+Route::get('/reports', function () {
+    return '準備中';
+})->name('reports.index');
+Route::get('/reading-plans', function () {
+    return '準備中';
+})->name('reading-plans.index');
+Route::get('/notifications', function () {
+    return '準備中';
+})->name('notifications.index');

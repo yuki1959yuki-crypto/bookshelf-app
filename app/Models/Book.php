@@ -43,4 +43,9 @@ class Book extends Model
 
         return $this->favoriteUsers()->where('user_id', $user->id)->exists();
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
