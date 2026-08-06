@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
     Route::post('/reviews/{review}/like', [ReviewLikeController::class, 'toggle'])->name('reviews.like');
+
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 });
 
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
@@ -37,9 +39,6 @@ Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show')
 Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
 
 // TODO: まだコントローラーのない未実装機能のダミールート（Bladeエラー回避用）
-Route::get('/reports', function () {
-    return '準備中';
-})->name('reports.index');
 Route::get('/reading-plans', function () {
     return '準備中';
 })->name('reading-plans.index');
