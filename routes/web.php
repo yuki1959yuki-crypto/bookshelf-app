@@ -8,6 +8,9 @@ Route::get('/', [BookController::class, 'index'])->name('home');
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/books/isbn/{isbn}', [BookController::class, 'searchByIsbn'])->name('books.isbn');
+
     Route::resource('books', BookController::class)->except(['index', 'show']);
 
     Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');

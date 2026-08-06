@@ -8,6 +8,7 @@ use App\Models\Book;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class BookController extends Controller
 {
@@ -129,5 +130,34 @@ class BookController extends Controller
         $book->delete();
 
         return redirect()->route('books.index')->with('success', '書籍を削除しました。');
+    }
+
+    public function searchByIsbn($isbn)
+    {
+        $apiKey = env('GOOGLE_BOOKS_API_KEY');
+
+        $response = Http::withoutVerifying()->get('https://www.googleapis.com/books/v1/volumes', [
+            'q' => 'isbn:'.$isbn,
+            'key' => $apiKey,
+        ]);
+
+        if ($response->failed()) {
+            return response()->json(['error' => 'APIエラー: '.$response->body()], 500);
+        }
+
+        $data = $response->json();
+        if (empty($data['totalItems'])) {
+            return response()->json(['error' => '該当する書籍が見つかりませんでした'], 404);
+        }
+
+        $book = $data['items'][0]['volumeInfo'];
+
+        return response()->json([
+            'title' => $book['title'] ?? '',
+            'author' => implode(', ', $book['authors'] ?? []) ?: '',
+            'published_date' => $book['publishedDate'] ?? '',
+            'description' => $book['description'] ?? '',
+            'image_url' => $book['imageLinks']['thumbnail'] ?? '',
+        ]);
     }
 }
