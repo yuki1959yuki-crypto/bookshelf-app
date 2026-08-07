@@ -32,6 +32,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/reviews/{review}/like', [ReviewLikeController::class, 'toggle'])->name('reviews.like');
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+    Route::get('/reading-plans', [ReadingPlanController::class, 'index'])->name('reading-plans.index');
+    Route::get('/reading-plans/create', [ReadingPlanController::class, 'create'])->name('reading-plans.create');
+    Route::post('/reading-plans', [ReadingPlanController::class, 'store'])->name('reading-plans.store');
 });
 
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
@@ -39,9 +43,7 @@ Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show')
 Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
 
 // TODO: まだコントローラーのない未実装機能のダミールート（Bladeエラー回避用）
-Route::get('/reading-plans', function () {
-    return '準備中';
-})->name('reading-plans.index');
+
 Route::get('/notifications', function () {
     return '準備中';
 })->name('notifications.index');
