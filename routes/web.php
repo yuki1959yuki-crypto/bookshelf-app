@@ -42,14 +42,13 @@ Route::middleware('auth')->group(function () {
     Route::put('/reading-plans/{reading_plan}', [ReadingPlanController::class, 'update'])->name('reading-plans.update');
     Route::delete('/reading-plans/{reading_plan}', [ReadingPlanController::class, 'destroy'])->name('reading-plans.destroy');
 
+    Route::get('/notifications', function () {
+        $notifications = auth()->user()->notifications;
+
+        return view('notifications.index', compact('notifications'));
+    })->name('notifications.index');
 });
 
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
 Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
-
-// TODO: まだコントローラーのない未実装機能のダミールート（Bladeエラー回避用）
-
-Route::get('/notifications', function () {
-    return '準備中';
-})->name('notifications.index');
