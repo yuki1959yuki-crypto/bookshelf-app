@@ -7,6 +7,7 @@ enum ReadingPlanStatus: string
     case NotStarted = '未着手';
     case Reading = '読書中';
     case Completed = '読了';
+    case Expired = '失効';
 
     public function label(): string
     {
