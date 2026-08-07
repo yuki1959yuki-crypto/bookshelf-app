@@ -42,11 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/reading-plans/{reading_plan}', [ReadingPlanController::class, 'update'])->name('reading-plans.update');
     Route::delete('/reading-plans/{reading_plan}', [ReadingPlanController::class, 'destroy'])->name('reading-plans.destroy');
 
-    Route::get('/notifications', function () {
-        $notifications = auth()->user()->notifications;
-
-        return view('notifications.index', compact('notifications'));
-    })->name('notifications.index');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 });
 
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
