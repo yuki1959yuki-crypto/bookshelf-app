@@ -12,11 +12,9 @@
                     <label for="status" class="text-sm text-gray-700">状態:</label>
                     <select name="status" id="status" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                         <option value="">すべて</option>
-                        @foreach (\App\Enums\ReadingPlanStatus::cases() as $statusOption)
-                            <option value="{{ $statusOption->value }}" @selected($currentStatus === $statusOption->value)>
-                                {{ $statusOption->label() }}
-                            </option>
-                        @endforeach
+                        <option value="未着手" @selected(request('status') === '未着手')>未着手</option>
+                        <option value="読書中" @selected(request('status') === '読書中')>読書中</option>
+                        <option value="読了" @selected(request('status') === '読了')>読了</option>
                     </select>
                 </form>
                 <a href="{{ route('reading-plans.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
