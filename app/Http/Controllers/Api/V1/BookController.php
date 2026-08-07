@@ -52,7 +52,7 @@ class BookController extends Controller
     {
         $book = DB::transaction(function () use ($request) {
             $data = array_merge($request->validated(), [
-                'user_id' => auth()->id() ?? 1,
+                'user_id' => $request->user()->id,
             ]);
 
             $book = Book::create($data);
@@ -75,6 +75,8 @@ class BookController extends Controller
 
     public function update(UpdateBookApiRequest $request, Book $book)
     {
+        $this->authorize('update', $book);
+
         DB::transaction(function () use ($request, $book) {
             $book->update($request->validated());
 
@@ -92,6 +94,8 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        $this->authorize('delete', $book);
+
         $book->delete();
 
         return response()->noContent();
