@@ -36,6 +36,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/reading-plans', [ReadingPlanController::class, 'index'])->name('reading-plans.index');
     Route::get('/reading-plans/create', [ReadingPlanController::class, 'create'])->name('reading-plans.create');
     Route::post('/reading-plans', [ReadingPlanController::class, 'store'])->name('reading-plans.store');
+
+    Route::post('/reading-plans/{reading_plan}/complete', [ReadingPlanController::class, 'complete'])->name('reading-plans.complete');
+    Route::get('/reading-plans/{reading_plan}/edit', [ReadingPlanController::class, 'edit'])->name('reading-plans.edit');
+    Route::put('/reading-plans/{reading_plan}', [ReadingPlanController::class, 'update'])->name('reading-plans.update');
+    Route::delete('/reading-plans/{reading_plan}', [ReadingPlanController::class, 'destroy'])->name('reading-plans.destroy');
+
 });
 
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
