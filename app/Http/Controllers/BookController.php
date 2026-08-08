@@ -16,16 +16,16 @@ class BookController extends Controller
     {
         $query = Book::with('genres')->withAvg('reviews', 'rating');
 
-        if ($request->filled('search')) {
-            $keyword = $request->input('search');
+        $keyword = $request->input('search') ?? $request->input('keyword');
+        if (! empty($keyword)) {
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
                     ->orWhere('author', 'like', "%{$keyword}%");
             });
         }
 
-        if ($request->filled('genre')) {
-            $genreId = $request->input('genre');
+        $genreId = $request->input('genre') ?? $request->input('genre_id');
+        if (! empty($genreId)) {
             $query->whereHas('genres', function ($q) use ($genreId) {
                 $q->where('genres.id', $genreId);
             });
@@ -40,7 +40,6 @@ class BookController extends Controller
                 $query->orderBy('title', 'asc');
                 break;
             case 'rating':
-
                 $query->orderByDesc('reviews_avg_rating');
                 break;
             case 'latest':
@@ -50,6 +49,10 @@ class BookController extends Controller
         }
 
         $books = $query->paginate(10)->withQueryString();
+
+        if ($request->expectsJson()) {
+            return response()->json($books);
+        }
 
         $genres = Genre::all();
 
@@ -86,7 +89,6 @@ class BookController extends Controller
     public function show(Book $book)
     {
         $book->load(['genres', 'reviews.user', 'reviews.likedByUsers']);
-
         $reviewsAvg = $book->reviews()->avg('rating');
 
         return view('books.show', compact('book', 'reviewsAvg'));
@@ -95,7 +97,6 @@ class BookController extends Controller
     public function edit(Book $book)
     {
         $this->authorize('update', $book);
-
         $genres = Genre::all();
 
         return view('books.edit', compact('book', 'genres'));
@@ -104,7 +105,6 @@ class BookController extends Controller
     public function update(UpdateBookRequest $request, Book $book)
     {
         $this->authorize('update', $book);
-
         $validated = $request->validated();
 
         $book->update([
@@ -126,7 +126,6 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         $this->authorize('delete', $book);
-
         $book->delete();
 
         return redirect()->route('books.index')->with('success', '書籍を削除しました。');
