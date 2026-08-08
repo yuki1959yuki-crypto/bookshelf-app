@@ -11,7 +11,7 @@ class BookApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -34,6 +34,8 @@ class BookApiTest extends TestCase
 
     public function test_api_can_store_book(): void
     {
+        $user = User::factory()->create();
+
         $data = [
             'title' => 'API新規書籍',
             'author' => 'API著者',
@@ -42,7 +44,8 @@ class BookApiTest extends TestCase
             'description' => 'API経由の登録テスト',
         ];
 
-        $response = $this->postJson('/api/v1/books', $data);
+        $response = $this->actingAs($user, 'sanctum')
+            ->postJson('/api/v1/books', $data);
 
         $response->assertStatus(201)
             ->assertJsonPath('data.title', 'API新規書籍');
@@ -52,9 +55,12 @@ class BookApiTest extends TestCase
 
     public function test_api_returns_422_with_japanese_validation_error(): void
     {
-        $response = $this->postJson('/api/v1/books', [
-            'title' => '',
-        ]);
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'sanctum')
+            ->postJson('/api/v1/books', [
+                'title' => '',
+            ]);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['title', 'author']);
@@ -62,9 +68,11 @@ class BookApiTest extends TestCase
 
     public function test_api_can_delete_book(): void
     {
-        $book = Book::factory()->create();
+        $user = User::factory()->create();
+        $book = Book::factory()->for($user)->create();
 
-        $response = $this->deleteJson("/api/v1/books/{$book->id}");
+        $response = $this->actingAs($user, 'sanctum')
+            ->deleteJson("/api/v1/books/{$book->id}");
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
