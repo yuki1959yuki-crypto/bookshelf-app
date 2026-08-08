@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\ReadingPlanStatus;
 use App\Models\ReadingPlan;
+use App\Notifications\ReadingPlanReminder;
 use Illuminate\Console\Command;
 
 class ManageReadingPlans extends Command
