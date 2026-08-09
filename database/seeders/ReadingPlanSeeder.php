@@ -36,7 +36,7 @@ class ReadingPlanSeeder extends Seeder
             'book_id' => $books[0]->id,
             'target_pages' => 300,
             'target_date' => $today->copy()->addDays(10),
-            'status' => 'in_progress',
+            'status' => '読書中',
         ]);
 
         ReadingPlan::create([
@@ -44,7 +44,7 @@ class ReadingPlanSeeder extends Seeder
             'book_id' => $books[1]->id,
             'target_pages' => 200,
             'target_date' => $today->copy()->subDays(3),
-            'status' => 'in_progress',
+            'status' => '読書中',
         ]);
 
         ReadingPlan::create([
@@ -52,7 +52,7 @@ class ReadingPlanSeeder extends Seeder
             'book_id' => $books[2]->id,
             'target_pages' => 150,
             'target_date' => $today->copy()->addDay(),
-            'status' => 'in_progress',
+            'status' => '読書中',
         ]);
 
         ReadingPlan::create([
@@ -60,7 +60,7 @@ class ReadingPlanSeeder extends Seeder
             'book_id' => $books[3]->id,
             'target_pages' => 250,
             'target_date' => $today->copy()->subDays(1),
-            'status' => 'completed',
+            'status' => '読了',
         ]);
 
         ReadingPlan::create([
@@ -68,7 +68,7 @@ class ReadingPlanSeeder extends Seeder
             'book_id' => $books[4]->id,
             'target_pages' => 180,
             'target_date' => $today->copy()->addDays(5),
-            'status' => 'in_progress',
+            'status' => '読書中',
         ]);
     }
 }

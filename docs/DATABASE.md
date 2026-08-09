@@ -1,171 +1,122 @@
 # データベース設計
 
-## usersテーブル
+## users
 
-| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
-|----------|----|-------------|-----------|-------------|------|
-| id | bigint unsigned | ○ | ○ | | `$table->id()`、Auto Increment、ユーザーID |
-| name | varchar(255) | | ○ | | `string('name')`、ユーザー名 |
-| email | varchar(255) | | ○ | | `UNIQUE`、`string('email')`、メールアドレス（ログイン用） |
-| email_verified_at | timestamp | | | | `nullable()`、`timestamp('email_verified_at')`、メール確認日時 |
-| password | varchar(255) | | ○ | | `string('password')`、ハッシュ化されたパスワード |
-| remember_token | varchar(100) | | | | `$table->rememberToken()`、NULL許可、ログイン保持トークン |
-| created_at | timestamp | | | | `$table->timestamps()`、レコード作成日時 |
-| updated_at | timestamp | | | | `$table->timestamps()`、レコード更新日時 |
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| id | bigint unsigned | ○ | - | ○ | ユーザーID（Auto Increment） |
+| name | varchar(255) | - | - | ○ | ユーザー名 |
+| email | varchar(255) | - | - | ○ | メールアドレス（UNIQUE） |
+| email_verified_at | timestamp | - | - | - | メール確認日時 |
+| password | varchar(255) | - | - | ○ | ハッシュ化されたパスワード |
+| remember_token | varchar(100) | - | - | - | ログイン保持トークン |
+| created_at | timestamp | - | - | - | 作成日時 |
+| updated_at | timestamp | - | - | - | 更新日時 |
 
-> **備考**  
-> 基本機能版ではFortifyの以下3カラムが追加されるが、応用機能版では不要。
->
-> - `two_factor_secret`
-> - `two_factor_recovery_codes`
-> - `two_factor_confirmed_at`
+> **補足**  
+> Laravel Fortify の `two_factor_secret`、`two_factor_recovery_codes`、`two_factor_confirmed_at` は本システムでは使用していません。
 
 ---
 
-## genresテーブル
+## books
 
-| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
-|----------|----|-------------|-----------|-------------|------|
-| id | bigint unsigned | ○ | ○ | | `id()`、Auto Increment、ジャンルID |
-| name | varchar(255) | | ○ | | `UNIQUE`、`string('name')`、ジャンル名（一意） |
-| created_at | timestamp | | | | `timestamps()`、レコード作成日時 |
-| updated_at | timestamp | | | | `timestamps()`、レコード更新日時 |
-
----
-
-## booksテーブル
-
-| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
-|----------|----|-------------|-----------|-------------|------|
-| id | bigint unsigned | ○ | ○ | | `id()`、Auto Increment、書籍ID |
-| user_id | bigint unsigned | | ○ | ○ | `foreignId('user_id')`、登録したユーザーのID |
-| title | varchar(255) | | ○ | | `string('title')`、書籍タイトル |
-| author | varchar(255) | | ○ | | `string('author')`、著者名 |
-| isbn | varchar(13) | | ○ | | `UNIQUE`、`string('isbn', 13)`、ISBN-13コード（一意） |
-| published_date | date | | ○ | | `date('published_date')`、出版日 |
-| description | text | | ○ | | `text('description')`、書籍の説明文・概要 |
-| image_url | varchar(2048) | | ○ | | `string('image_url', 2048)`、書籍画像URL |
-| created_at | timestamp | | | | `timestamps()`、レコード作成日時 |
-| updated_at | timestamp | | | | `timestamps()`、レコード更新日時 |
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| id | bigint unsigned | ○ | - | ○ | 書籍ID |
+| user_id | bigint unsigned | - | ○ | ○ | 登録ユーザーID |
+| title | varchar(255) | - | - | ○ | 書籍タイトル |
+| author | varchar(255) | - | - | ○ | 著者名 |
+| isbn | varchar(13) | - | - | - | ISBN-13（UNIQUE） |
+| published_date | date | - | - | - | 出版日 |
+| description | text | - | - | ○ | 書籍概要 |
+| image_url | varchar(2048) | - | - | ○ | 書籍画像URL |
+| created_at | timestamp | - | - | - | 作成日時 |
+| updated_at | timestamp | - | - | - | 更新日時 |
 
 ---
 
-## book_genreテーブル
+## genres
 
-| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
-|----------|----|-------------|-----------|-------------|------|
-| book_id | bigint unsigned | ○ | ○ | ○ | `foreignId('book_id')`、書籍ID |
-| genre_id | bigint unsigned | ○ | ○ | ○ | `foreignId('genre_id')`、ジャンルID |
-
-**複合主キー:** `(book_id, genre_id)`
-
----
-
-## reviewsテーブル
-
-| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
-|----------|----|-------------|-----------|-------------|------|
-| id | bigint unsigned | ○ | ○ | | `id()`、レビューID |
-| book_id | bigint unsigned | | ○ | ○ | `foreignId('book_id')`、レビュー対象の書籍ID |
-| user_id | bigint unsigned | | ○ | ○ | `foreignId('user_id')`、投稿したユーザーのID |
-| rating | tinyint unsigned | | ○ | | `unsignedTinyInteger('rating')`、星評価（1〜5） |
-| comment | text | | ○ | | `text('comment')`、レビュー本文 |
-| created_at | timestamp | | | | `timestamps()`、レコード作成日時 |
-| updated_at | timestamp | | | | `timestamps()`、レコード更新日時 |
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| id | bigint unsigned | ○ | - | ○ | ジャンルID |
+| name | varchar(255) | - | - | ○ | ジャンル名（UNIQUE） |
+| created_at | timestamp | - | - | - | 作成日時 |
+| updated_at | timestamp | - | - | - | 更新日時 |
 
 ---
 
-## favoritesテーブル
+## book_genre
 
-| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
-|----------|----|-------------|-----------|-------------|------|
-| user_id | bigint unsigned | ○ | ○ | ○ | `foreignId('user_id')`、ユーザーID |
-| book_id | bigint unsigned | ○ | ○ | ○ | `foreignId('book_id')`、書籍ID |
-| created_at | timestamp | | ○ | | `timestamps()`、お気に入り登録日時 |
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| book_id | bigint unsigned | ○ | ○ | ○ | 書籍ID |
+| genre_id | bigint unsigned | ○ | ○ | ○ | ジャンルID |
 
-**複合主キー:** `(user_id, book_id)`
+> **複合主キー:** (`book_id`, `genre_id`)
 
 ---
 
-## review_likesテーブル
+## reviews
 
-| カラム名 | 型 | PRIMARY KEY | NOT NULL | FOREIGN KEY | 補足 |
-|----------|----|-------------|-----------|-------------|------|
-| review_id | bigint unsigned | ○ | ○ | ○ | `foreignId('review_id')`、レビューID |
-| user_id | bigint unsigned | ○ | ○ | ○ | `foreignId('user_id')`、ユーザーID |
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| id | bigint unsigned | ○ | - | ○ | レビューID |
+| book_id | bigint unsigned | - | ○ | ○ | 対象書籍ID |
+| user_id | bigint unsigned | - | ○ | ○ | 投稿ユーザーID |
+| rating | tinyint unsigned | - | - | ○ | 評価（1〜5） |
+| comment | text | - | - | ○ | レビュー本文 |
+| created_at | timestamp | - | - | - | 作成日時 |
+| updated_at | timestamp | - | - | - | 更新日時 |
 
-**複合主キー:** `(review_id, user_id)`
+---
 
+## favorites
 
-```mermaid
-erDiagram
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| user_id | bigint unsigned | ○ | ○ | ○ | ユーザーID |
+| book_id | bigint unsigned | ○ | ○ | ○ | 書籍ID |
+| created_at | timestamp | - | - | ○ | お気に入り登録日時 |
 
-    USERS {
-        bigint id PK
-        varchar name
-        varchar email
-        timestamp email_verified_at
-        varchar password
-        varchar remember_token
-        timestamp created_at
-        timestamp updated_at
-    }
+> **複合主キー:** (`user_id`, `book_id`)
 
-    GENRES {
-        bigint id PK
-        varchar name
-        timestamp created_at
-        timestamp updated_at
-    }
+---
 
-    BOOKS {
-        bigint id PK
-        bigint user_id FK
-        varchar title
-        varchar author
-        varchar isbn
-        date published_date
-        text description
-        varchar image_url
-        timestamp created_at
-        timestamp updated_at
-    }
+## review_likes
 
-    REVIEWS {
-        bigint id PK
-        bigint book_id FK
-        bigint user_id FK
-        tinyint rating
-        text comment
-        timestamp created_at
-        timestamp updated_at
-    }
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| review_id | bigint unsigned | ○ | ○ | ○ | レビューID |
+| user_id | bigint unsigned | ○ | ○ | ○ | ユーザーID |
 
-    BOOK_GENRE {
-        bigint book_id PK,FK
-        bigint genre_id PK,FK
-    }
+> **複合主キー:** (`review_id`, `user_id`)
 
-    FAVORITES {
-        bigint user_id PK,FK
-        bigint book_id PK,FK
-        timestamp created_at
-    }
+---
 
-    REVIEW_LIKES {
-        bigint review_id PK,FK
-        bigint user_id PK,FK
-    }
+## reading_plans
 
-    USERS ||--o{ BOOKS : registers
-    USERS ||--o{ REVIEWS : writes
-    USERS ||--o{ FAVORITES : favorites
-    USERS ||--o{ REVIEW_LIKES : likes
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| id | bigint unsigned | ○ | - | ○ | 読書計画ID |
+| user_id | bigint unsigned | - | ○ | ○ | 計画作成ユーザーID |
+| book_id | bigint unsigned | - | ○ | ○ | 対象書籍ID |
+| target_date | date | - | - | ○ | 読了予定日 |
+| status | varchar(255) | - | - | ○ | 計画状態 |
+| created_at | timestamp | - | - | - | 作成日時 |
+| updated_at | timestamp | - | - | - | 更新日時 |
 
-    BOOKS ||--o{ REVIEWS : has
-    BOOKS ||--o{ BOOK_GENRE : belongs_to
-    GENRES ||--o{ BOOK_GENRE : categorizes
+---
 
-    BOOKS ||--o{ FAVORITES : favorited_by
-    REVIEWS ||--o{ REVIEW_LIKES : receives
-```
+## notifications
+
+| カラム名 | 型 | PK | FK | NOT NULL | 備考 |
+|----------|----|:--:|:--:|:--------:|------|
+| id | uuid | ○ | - | ○ | 通知ID |
+| type | varchar(255) | - | - | ○ | 通知クラス名 |
+| notifiable_type | varchar(255) | - | - | ○ | 通知対象モデル |
+| notifiable_id | bigint unsigned | - | - | ○ | 通知対象ユーザーID |
+| data | text | - | - | ○ | 通知内容（JSON） |
+| read_at | timestamp | - | - | - | 既読日時 |
+| created_at | timestamp | - | - | - | 作成日時 |
+| updated_at | timestamp | - | - | - | 更新日時 |

@@ -34,6 +34,11 @@ class Book extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->avg('rating');
+    }
+
     public function favoriteUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
