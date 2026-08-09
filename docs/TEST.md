@@ -1,4 +1,4 @@
-## 🧪 テストの実施手順
+## テストの実施手順
 
 Laravel Sail（Docker環境）を使用して機能テスト（Feature Test）およびユニットテストを実装しています。
 ※ 以下のコマンドは、VS Codeのターミナル（Ubuntu環境）から実行してください。
@@ -22,7 +22,7 @@ Laravel Sail（Docker環境）を使用して機能テスト（Feature Test）�
 （例）./vendor/bin/sail artisan test tests/Feature/Api/BookApiAuthTest.php
 ```
 
-### 🧪 テスト仕様書一覧
+### テスト仕様書一覧
 
 #### 全体・共通セキュリティ
 | # | テスト内容 | 観点 | 該当テストファイル（ファイルパス） |

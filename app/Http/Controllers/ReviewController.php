@@ -13,11 +13,16 @@ class ReviewController extends Controller
     {
         $validated = $request->validated();
 
+        $comment = $validated['comment'] ?? null;
+        if ($comment === 'null' || $comment === '') {
+            $comment = null;
+        }
+
         Review::create([
             'book_id' => $book->id,
             'user_id' => auth()->id(),
             'rating' => $validated['rating'],
-            'comment' => $validated['comment'],
+            'comment' => $comment,
         ]);
 
         return redirect()->route('books.show', $book)->with('success', 'レビューを投稿しました。');

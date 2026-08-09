@@ -10,7 +10,7 @@
 * [画面遷移](docs/SCREEN-FLOW.md)
 * [機能要件](docs/FRD.md)
 * [データ要件](docs/DRD.md)
-* [ER図](docs/DATABASE.md)
+* [ER図](docs/ER.md)
 * [テーブル構造](docs/DATABASE.md)
 * [バリデーションルール仕様](docs/VALIDATION.md)
 * [API設計](docs/API_DESIGN.md)
