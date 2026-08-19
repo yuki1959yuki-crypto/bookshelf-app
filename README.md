@@ -143,7 +143,6 @@ sail artisan test
 
 ```mermaid
 erDiagram
-erDiagram
     users ||--o{ books : "登録"
     users ||--o{ reviews : "投稿"
     users ||--o{ favorites : "お気に入り"
